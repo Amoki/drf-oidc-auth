@@ -31,8 +31,12 @@ class BaseOidcAuthentication(BaseAuthentication):
     @property
     @cache(ttl=api_settings.OIDC_BEARER_TOKEN_EXPIRATION_TIME)
     def oidc_config(self):
-        return requests.get(api_settings.OIDC_ENDPOINT + '/.well-known/openid-configuration').json()
+        response = requests.get(
+            api_settings.OIDC_ENDPOINT + "/.well-known/openid-configuration"
+        )
+        response.raise_for_status()
 
+        return response.json()
 
 class BearerTokenAuthentication(BaseOidcAuthentication):
     www_authenticate_realm = 'api'
